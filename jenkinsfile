@@ -1,24 +1,35 @@
-pipeline
 {
-    agent any 
+    agent any
     stages {
-        stage('Build') { 
+        stage('Build') {
             steps {
-		sh 'mvn compile'
+                sh 'mvn compile'
             }
         }
-        stage('Test') { 
+        stage('Test') {
             steps {
-		sh 'mvn test'
+                sh 'mvn test'
             }
         }
-	 
-        stage('tomcat') {
-	    steps {
-	        sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.3/WebAppCal-1.2.3.war' }
-	{
-		sh 'sudo cp WebAppCal-1.2.3.war /home/centos/apache-tomcat-7.0.94/webapps' }	
-		}
+        stage('Sonar Analysis') {
+            steps {
+                sh 'mvn sonar:sonar \
+  -Dsonar.host.url=http://184.72.78.153:9000 \
+  -Dsonar.login=11699497895f51ce15c7a4601b6e41d5851d1406'
+                }
+         }
+        stage('Nexus Deploy') {
+            steps {
+                sh 'mvn deploy'
+                }
+        }
+         stage('tomcat') {
+             steps {
+                 sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.7/WebAppCal-1.2.7.war' }
+        {
+                 sh 'sudo cp WebAppCal-1.2.7.war /home/centos/apache-tomcat-7.0.94/webapps' }
+                }
 
     }
 }
+
