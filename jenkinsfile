@@ -1,4 +1,5 @@
-pipeline {
+pipeline
+{
     agent any 
     stages {
         stage('Build') { 
@@ -13,10 +14,6 @@ pipeline {
 		sh 'mvn test'
             }
         }
-        stage('Deploy') { 
-            steps {
-                 echo 'Deploying'
-            }
-        }
+        
     }
 }
