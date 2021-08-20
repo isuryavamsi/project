@@ -15,7 +15,7 @@ pipeline
 	 
         stage('tomcat') {
 	    steps {
-	        sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.4/WebAppCal-1.2.4.war sudo cp WebAppCal-1.2.4.war /home/centos/apache-tomcat-7.0.94/webapps' }	
+	        sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.3/WebAppCal-1.2.3.war sudo cp WebAppCal-1.2.3.war /home/centos/apache-tomcat-7.0.94/webapps' }	
 		}
 
     }
