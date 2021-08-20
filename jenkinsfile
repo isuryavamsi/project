@@ -4,16 +4,21 @@ pipeline
     stages {
         stage('Build') { 
             steps {
-                echo 'Building'
 		sh 'mvn compile'
             }
         }
         stage('Test') { 
             steps {
-                echo 'Testing'
 		sh 'mvn test'
             }
         }
+        stage('Sonar Analysis')
+            steps {
+	        sh 'mvn sonar:sonar \
+  -Dsonar.host.url=http://184.72.78.153:9000 \
+  -Dsonar.login=d955a37f644f2ee0706e813aed1ddb95f5696'
+		}
+	
         
     }
 }
