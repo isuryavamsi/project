@@ -19,11 +19,6 @@ pipeline
   -Dsonar.login=11699497895f51ce15c7a4601b6e41d5851d1406'
 		}
 	 }
-        stage('Nexus Deploy') {
-	    steps {
-	        sh 'mvn deploy'
-		}
-	}
         stage('tomcat') {
 	    steps {
 	        sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.6/WebAppCal-1.2.6.war sudo cp WebAppCal-1.2.6.war' }
