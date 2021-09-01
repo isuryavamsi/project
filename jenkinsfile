@@ -12,15 +12,6 @@ pipeline {
                 sh 'mvn test'
             }
         }
-	stage('sonar') {
-        steps {
-        sh """
-        mvn sonar:sonar \
-  -Dsonar.host.url=http://54.174.240.88:9000 \
-  -Dsonar.login=956f9de43307e31cccef3b8b2443d87fda625d9c
-        """
-        }
-        }
 	stage('Change pom file') {
             steps {
 	      sh "git checkout master"
