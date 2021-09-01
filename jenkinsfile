@@ -1,6 +1,6 @@
-pipeline
-{
+pipeline {
     agent any
+
     stages {
         stage('Build') {
             steps {
@@ -12,14 +12,34 @@ pipeline
                 sh 'mvn test'
             }
         }
-        
-         stage('tomcat') {
-             steps {
-                 sh 'wget --user admin --password admin123 http://184.72.78.153:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.4/WebAppCal-1.2.4.war' }
-        {
-                 sh 'sudo cp WebAppCal-1.2.4.war /home/centos/apache-tomcat-7.0.94/webapps' }
-                }
-
-    }
+	stage('sonar') {
+        steps {
+        sh """
+        mvn sonar:sonar \
+  -Dsonar.host.url=http://54.174.240.88:9000 \
+  -Dsonar.login=956f9de43307e31cccef3b8b2443d87fda625d9c
+        """
+        }
+        }
+	stage('Change pom file') {
+            steps {
+	      sh "git checkout master"
+              sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}"
+	      sh "mvn versions:commit"
+            }
+        }
+	stage('Nexus')
+	{
+	   steps{
+		sh "mvn deploy"
+	}
+	}
+        stage('Deploy') {
+            steps {
+                sh "wget --user admin --password admin123 http://54.174.240.88:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/${DnewVersion}/WebAppCal-${DnewVersion}.war"
+		sh "sudo cp WebAppCal-${DnewVersion}.war  /home/centos/apache-tomcat-7.0.94/webapps/"
+            }
+        }
+}
 }
 
