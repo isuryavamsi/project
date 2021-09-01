@@ -28,10 +28,15 @@ pipeline {
 	      sh "mvn versions:commit"
             }
         }
-        stage('Tomcat') {
+        stage('Nexus'){
+steps { 
+ sh 'mvn deploy'
+}
+}
+stage('Tomcat') {
             steps {
-                sh "wget --user admin --password admin123 http://54.174.240.88:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.8/WebAppCal-1.2.8.war"
-                sh "sudo cp WebAppCal-1.2.8.war  /home/centos/apache-tomcat-7.0.94/webapps"
+                sh "wget --user admin --password admin123 http://54.174.240.88:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/1.2.4/WebAppCal-1.2.4.war"
+                sh "sudo cp WebAppCal-1.2.4.war  /home/centos/apache-tomcat-7.0.94/webapps"
             }
         }
 }
