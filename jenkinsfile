@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+   def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+    }
+
+
     stages {
         stage('Build') {
             steps {
@@ -12,15 +17,26 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Nexus'){
-steps { 
- sh 'mvn deploy'
-}
-}
-stage('Tomcat') {
+        stage('sonar') {
+        steps {
+        sh """
+        mvn sonar:sonar \
+          -Dsonar.host.url=http://54.160.223.90:9000 \
+          -Dsonar.login=73a27ce3f634449cc08ace76fc91e17d35a6b92f
+        """
+        }
+        }
+        stage('Nexus')
+        {
+           steps{
+                sh "mvn deploy"
+        }
+        }
+        stage('Deploy') {
             steps {
-            sh 'wget --user admin --password admin123 http://54.174.240.88:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/${DnewVersion}/WebAppCal-${DnewVersion}.war'
-		sh 'sudo cp WebAppCal-${DnewVersion}.war /home/centos/apache-tomcat-7.0.94/webapps'}
+                sh "wget --user admin --password admin123 http://54.160.223.90:8081/nexus/service/local/repositories/releases/content/com/web/cal/WebAppCal/${version}/WebAppCal-${version}.war"
+                sh "sudo cp WebAppCal-${version}.war  /home/centos/apache-tomcat-7.0.94/webapps/"
+            }
         }
 }
 }
